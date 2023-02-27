@@ -12,24 +12,26 @@ export async function storeVote(poll: IPoll, voteIndex: number, { id, username, 
     const findVoter = ({ id: voterId }) => voterId === id;
     const filterVoter = ({ id: voterId }) => voterId !== id;
 
-    const previousVote = poll.votes.findIndex(({ voters }) => voters.some(findVoter));
+    const previousVote = poll.data.map((i) => i.votes).findIndex(({ voters }) => voters.some(findVoter));
 
-    const hasVoted = poll.votes[voteIndex].voters.findIndex(findVoter);
+    const hasVoted = poll.data[voteIndex].votes.voters.findIndex(findVoter);
 
     if (hasVoted !== -1) {
         poll.totalVotes--;
-        poll.votes[voteIndex].quantity--;
-        poll.votes[voteIndex].voters.splice(hasVoted, 1);
+        poll.data[voteIndex].votes.quantity--;
+        poll.data[voteIndex].votes.voters.splice(hasVoted, 1);
     } else {
         poll.totalVotes++;
-        poll.votes[voteIndex].quantity++;
-        poll.votes[voteIndex].voters.push(voter);
+        poll.data[voteIndex].votes.quantity++;
+        poll.data[voteIndex].votes.voters.push(voter);
     }
+
+    poll.data = poll.data.sort((i, j) => j.votes.quantity - i.votes.quantity);
 
     if (poll.singleChoice && hasVoted === -1 && previousVote !== -1) {
         poll.totalVotes--;
-        poll.votes[previousVote].quantity--;
-        poll.votes[previousVote].voters = poll.votes[previousVote].voters.filter(filterVoter);
+        poll.data[previousVote].votes.quantity--;
+        poll.data[previousVote].votes.voters = poll.data[previousVote].votes.voters.filter(filterVoter);
     }
 
     return persis.updateByAssociation(association, poll);

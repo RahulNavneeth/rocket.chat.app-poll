@@ -49,10 +49,10 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
 
     block.addDividerBlock();
 
-    const maxVoteQuantity = Math.max(...poll.votes.map((vote) => vote.quantity));
+    const maxVoteQuantity = Math.max(...poll.data.map(({votes}) => votes.quantity));
     // Forms array of option indices with maximum votes (more than 1 option can be max-voted)
-    const maxVoteIndices = poll.votes
-        .map((vote) => vote.quantity)
+    const maxVoteIndices = poll.data
+        .map(({votes}) => votes.quantity)
         .reduce((ind: Array<number>, el, i) => {
             if (el === maxVoteQuantity) {
                 ind.push(i);
@@ -72,11 +72,11 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
             },
         });
 
-        if (!poll.votes[index]) {
+        if (!poll.data[index]) {
             return;
         }
 
-        const graph = buildVoteGraph(poll.votes[index], poll.totalVotes, maxVoteIndices.includes(index));
+        const graph = buildVoteGraph(poll.data[index].votes, poll.totalVotes, maxVoteIndices.includes(index));
         block.addContextBlock({
             elements: [
                 block.newMarkdownTextObject(graph),
@@ -86,7 +86,7 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
         if (poll.visibility === pollVisibility.confidential) {
             return;
         }
-        const voters = buildVoters(poll.votes[index], showNames, anonymousOptions.includes(poll.options[index]));
+        const voters = buildVoters(poll.data[index].votes, showNames, anonymousOptions.includes(poll.data[index].option));
         if (!voters) {
             return;
         }
@@ -129,8 +129,8 @@ export function createPollBlocks(block: BlockBuilder, question: string, options:
 
     // Word cloud when Internet access disabled
     if (poll.finished && poll.wordCloud && !wordCloud) {
-        const responseSummary = poll.votes.map((vote, index) => {
-            return `${poll.options[index]}(${vote.quantity})`;
+        const responseSummary = poll.data.map(({votes, option}) => {
+            return `${option}(${votes.quantity})`;
         }).join(' ');
         block.addContextBlock({
             elements: [

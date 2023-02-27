@@ -39,7 +39,7 @@ export async function votePoll({ data, read, persistence, modify, pollIndex, tot
     const wordCloudAPI = await read.getEnvironmentReader().getSettings().getById('wordcloud-api');
     const timeZone = await read.getEnvironmentReader().getSettings().getById('timezone');
 
-    createPollBlocks(block, poll.question, poll.options, poll, showNames.value, timeZone.value, poll.anonymousOptions, wordCloudAPI.value);
+    createPollBlocks(block, poll.question, poll.data.map((i) => i.option), poll, showNames.value, timeZone.value, poll.anonymousOptions, wordCloudAPI.value);
 
     message.setBlocks(block);
 

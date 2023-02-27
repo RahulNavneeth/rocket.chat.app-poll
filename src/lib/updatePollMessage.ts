@@ -47,8 +47,7 @@ export async function updatePollMessage({
 
     try {
 
-        poll.options.push(state.addOption.option);
-        poll.votes.push({ quantity: 0, voters: [] });
+        poll.data.push({option: state.addOption.option, votes: { quantity: 0, voters: [] } })
 
         const message = await modify
             .getUpdater()
@@ -68,7 +67,7 @@ export async function updatePollMessage({
         createPollBlocks(
             block,
             poll.question,
-            poll.options,
+            poll.data.map((i) => i.votes),
             poll,
             showNames.value,
             timeZone.value,

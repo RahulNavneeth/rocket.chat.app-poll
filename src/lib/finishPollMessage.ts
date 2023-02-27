@@ -85,9 +85,9 @@ export async function finishPollMessage({
 
         if (poll.wordCloud && wordCloudAPI.value) {
             let wordList = [] as Array<string>;
-            poll.options.map((option, index) => {
+            poll.data.map((i) => i).map((option, index) => {
                 wordList = wordList.concat(
-                    Array(poll.votes[index].quantity).fill(option),
+                    Array(poll.data[index].votes.quantity).fill(option),
                 );
             });
             const attachment = {
@@ -98,7 +98,7 @@ export async function finishPollMessage({
                 createPollBlocks(
                     block,
                     poll.question,
-                    poll.options,
+                    poll.data.map((i) => i.option),
                     poll,
                     showNames.value,
                     timeZone.value,
@@ -123,7 +123,7 @@ export async function finishPollMessage({
                 createPollBlocks(
                     block,
                     poll.question,
-                    poll.options,
+                    poll.data.map((i) => i.option),
                     poll,
                     showNames.value,
                     timeZone.value,
@@ -139,7 +139,7 @@ export async function finishPollMessage({
             createPollBlocks(
                 block,
                 poll.question,
-                poll.options,
+                poll.data.map((i) => i.option),
                 poll,
                 showNames.value,
                 timeZone.value,

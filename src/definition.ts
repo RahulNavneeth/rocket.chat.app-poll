@@ -18,9 +18,8 @@ export interface IPoll {
     msgId: string;
     uid: string; // user who created the poll
     question: string;
-    options: Array<string>;
     totalVotes: number;
-    votes: Array<IVoter>;
+    data: Array<{option: string, votes: IVoter }>;
     finished?: boolean;
     visibility?: pollVisibility;
     singleChoice?: boolean;

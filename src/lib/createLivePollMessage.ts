@@ -1,6 +1,6 @@
 import { IModify, IPersistence, IRead } from '@rocket.chat/apps-engine/definition/accessors';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '@rocket.chat/apps-engine/definition/metadata';
-import { IPoll } from '../definition';
+import { IPoll, IVoter } from '../definition';
 import { createPollBlocks } from './createPollBlocks';
 
 export async function createLivePollMessage(data: any, read: IRead, modify: IModify, persistence: IPersistence, uid: string, pollIndex: number) {
@@ -16,7 +16,7 @@ export async function createLivePollMessage(data: any, read: IRead, modify: IMod
 
     const state = record.polls[pollIndex];
 
-    const options = Object.entries<any>(state.poll || {})
+    const options = Object.entries<string>(state.poll || {})
         .filter(([key]) => key !== 'question' && key !== 'ttv')
         .map(([, option]) => option)
         .filter((option) => option.trim() !== '');
@@ -43,9 +43,8 @@ export async function createLivePollMessage(data: any, read: IRead, modify: IMod
             question: state.poll.question,
             uid,
             msgId: '',
-            options,
             totalVotes: 0,
-            votes: options.map(() => ({ quantity: 0, voters: [] })),
+            data: options.map((i) => ({ option: i, votes: { quantity: 0, voters: [] } })),
             visibility,
             singleChoice: mode === 'single',
             liveId: id,
