@@ -1,9 +1,8 @@
 import { IPersistence } from '@rocket.chat/apps-engine/definition/accessors';
 import { RocketChatAssociationModel, RocketChatAssociationRecord } from '@rocket.chat/apps-engine/definition/metadata';
 import { IUser } from '@rocket.chat/apps-engine/definition/users';
-
+import {sortVotes} from '../assets/sortVotes';
 import { IPoll, IVoter } from '../definition';
-import {sortVotes} from './sortVotes';
 
 export async function storeVote(poll: IPoll, voteIndex: number, { id, username, name }: IUser, { persis }: { persis: IPersistence }) {
     const association = new RocketChatAssociationRecord(RocketChatAssociationModel.MISC, poll.msgId);
